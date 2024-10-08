@@ -1,63 +1,105 @@
+/* Reset default styles */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
 /* Center the entire body content */
 body {
     font-family: Arial, sans-serif;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    margin: 0;
     background-color: #f0f0f0;
+}
+
+/* Header styling */
+header {
+    background-color: #007bff;
+    color: white;
+    padding: 20px 0;
+    text-align: center;
+    position: fixed;
+    width: 100%;
+    top: 0;
+    left: 0;
+}
+
+header h1 {
+    margin: 0;
+    font-size: 32px;
+}
+
+#progress-bar-container {
+    width: 80%;
+    background-color: #ddd;
+    margin: 10px auto;
+    border-radius: 20px;
+    overflow: hidden;
+}
+
+#progress-bar {
+    width: 0%;
+    height: 10px;
+    background-color: #28a745;
 }
 
 /* Ensure the quiz container is also centered */
 #quiz-container {
     display: flex;
     flex-direction: column;
-    justify-content: center;
     align-items: center;
     width: 100%;
-    max-width: 600px; /* Set a maximum width for the container */
+    max-width: 800px;
     padding: 20px;
-    box-sizing: border-box;
+    margin: 100px auto 0 auto; /* Add top margin to account for fixed header */
 }
 
 /* Styling for the card */
 .card {
-    background-color: #f7f7f7;
+    background-color: #ffffff;
     padding: 40px;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     text-align: center;
     font-size: 24px;
     margin-bottom: 20px;
-    width: 100%;      /* Ensure the card scales within the container */
+    width: 100%;
+}
+
+.question-card .card {
+    font-size: 28px;
+    padding: 30px;
 }
 
 /* Center and space the options */
 .options {
     display: flex;
     justify-content: center;
-    flex-wrap: wrap;  /* Allow wrapping if there are too many options */
-    gap: 10px;
-    padding: 10px;
+    flex-wrap: wrap;
+    gap: 20px;
+    padding: 20px;
+    width: 100%;
 }
 
 /* Ensure the option cards are centered and sized appropriately */
 .option-card {
     background-color: #e0e0e0;
-    padding: 20px;
+    padding: 20px 10px;
     border-radius: 50px;
-    font-size: 13px;
+    font-size: 18px;
     text-align: center;
     cursor: pointer;
     transition: background-color 0.3s ease;
-    flex-basis: 50%;      /* Allow flexible width of the option cards */
-    max-width: 150px;     /* Set a maximum width for the cards */
-    min-width: 120px;     /* Set a minimum width for consistency */
+    flex: 1 1 calc(50% - 40px);
+    max-width: 200px;
+    min-width: 150px;
     box-sizing: border-box;
 }
 
-/* Hover effect for options */
+.option-card.disabled {
+    pointer-events: none;
+    opacity: 0.6;
+}
+
 .option-card:hover {
     background-color: #d0d0d0;
 }
@@ -74,8 +116,8 @@ body {
 .continue-btn {
     display: none;
     margin-top: 20px;
-    padding: 10px 20px;
-    font-size: 16px;
+    padding: 15px 30px;
+    font-size: 18px;
     cursor: pointer;
     background-color: #007bff;
     color: white;
@@ -93,7 +135,7 @@ body {
     display: none;
     margin-top: 20px;
     background-color: #f7f7f7;
-    padding: 15px;
+    padding: 20px;
     border-radius: 10px;
     font-size: 18px;
     color: red;
@@ -103,9 +145,17 @@ body {
 }
 
 /* Help button styling */
+.header {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    margin-bottom: 20px;
+    width: 100%;
+}
+
 #help-btn {
     margin-left: 20px;
-    padding: 5px 10px;
+    padding: 10px 20px;
     font-size: 16px;
     cursor: pointer;
     background-color: #28a745;
@@ -134,11 +184,11 @@ body {
 /* Modal Content/Box */
 .modal-content {
     background-color: #fefefe;
-    margin: 10% auto; /* 10% from top and centered */
+    margin: 5% auto; /* 5% from top and centered */
     padding: 20px;
     border: 1px solid #888;
-    width: 80%; /* Adjust as needed */
-    max-width: 600px; /* Max width */
+    width: 90%; /* Adjust as needed */
+    max-width: 800px; /* Max width */
     position: relative;
     border-radius: 10px;
 }
@@ -158,6 +208,10 @@ body {
     color: black;
     text-decoration: none;
     cursor: pointer;
+}
+
+.modal-content h2, .modal-content h3 {
+    margin-top: 20px;
 }
 
 .modal-content table {

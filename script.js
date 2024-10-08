@@ -18,14 +18,14 @@ $(document).ready(function () {
                 let correctConjugation = shuffled[0];
                 let incorrectConjugations = shuffled.slice(1, Math.min(availableConjugations.length, 4));
 
-                incorrectConjugations.push(correctConjugation);
-                let options = incorrectConjugations.sort(() => 0.5 - Math.random());
+                // Prepare options
+                let options = incorrectConjugations.concat(correctConjugation).sort(() => 0.5 - Math.random());
                 
                 questionArray.push({
                     sentence: correctConjugation.sentence,
                     targetConjugation: correctConjugation.targetConjugation,
                     verb: verb,
-                    correct: correctConjugation.correct,
+                    correct: correctConjugation,
                     explanation: correctConjugation.explanation,
                     options: options
                 });
@@ -46,6 +46,7 @@ $(document).ready(function () {
         handleOptionClick();
         handleContinue();
         updateAccuracy();
+        updateProgressBar();
     }).fail(function() {
         console.error("Error: Could not load questions.json.");
         $('#quiz-container').html('<div class="card">Error: Unable to load quiz data.</div>');
@@ -60,6 +61,11 @@ $(document).ready(function () {
         }
     }
 
+    function updateProgressBar() {
+        let progressPercentage = ((currentQuestionIndex) / totalQuestions) * 100;
+        $('#progress-bar').css('width', progressPercentage + '%');
+    }
+
     function renderQuestion(questionIndex) {
         if (!questionArray[questionIndex]) {
             console.error("Error: Question data is undefined.");
@@ -70,19 +76,20 @@ $(document).ready(function () {
         let question = questionArray[questionIndex];
         let quizContainer = $('#quiz-container');
 
+        let optionsHtml = question.options.map(option => `
+            <div class="option-card" data-answer="${option.title === question.correct.title ? 'correct' : 'wrong'}" data-conjugation="${option.targetConjugation}">
+                ${option.title}
+            </div>
+        `).join('');
+
         let questionHtml = `
         <div class="question-card" id="question${questionIndex}">
             <div class="header">
-                <h2>Accuracy: <span id="accuracy">0%</span></h2>
                 <button id="help-btn">Help</button>
             </div>
-            <div class="card">${question.sentence} <br><small>(${question.targetConjugation})</small></div>
+            <div class="card">${question.sentence.replace('____', '_____')} <br><small>(${question.targetConjugation})</small></div>
             <div class="options">
-                ${question.options.map(option => `
-                    <div class="option-card" data-answer="${option.correct === question.correct ? 'correct' : 'wrong'}" data-conjugation="${option.targetConjugation}">
-                        ${option.title}
-                    </div>
-                `).join('')}
+                ${optionsHtml}
             </div>
             <div class="message-box" id="messageBox${questionIndex}"></div>
             <button class="continue-btn" id="continueBtn${questionIndex}" style="display:none;">Continue</button>
@@ -90,23 +97,29 @@ $(document).ready(function () {
     `;
 
         quizContainer.html(questionHtml);
+        updateProgressBar();
     }
 
     function handleOptionClick() {
         $(document).on('click', '.option-card', function () {
+            if ($(this).hasClass('selected')) {
+                return;
+            }
+            $('.option-card').addClass('disabled');
             const isCorrect = $(this).data('answer') === 'correct';
             let question = questionArray[currentQuestionIndex];
 
             if (isCorrect) {
-                $(this).addClass('correct');
+                $(this).addClass('correct selected');
                 correctAnswers++;
                 updateAccuracy();
                 $(`#continueBtn${currentQuestionIndex}`).fadeIn();
                 $(`#messageBox${currentQuestionIndex}`).hide();
             } else {
-                $(this).addClass('wrong');
-                let message = `No, ${$(this).text()} is the ${$(this).data('conjugation')} form and is not the ${question.targetConjugation} form. ${question.explanation}`;
+                $(this).addClass('wrong selected');
+                let message = `Incorrect. "${$(this).text()}" is the ${$(this).data('conjugation')} form, not the ${question.targetConjugation} form. ${question.explanation}`;
                 $(`#messageBox${currentQuestionIndex}`).text(message).fadeIn();
+                $(`#continueBtn${currentQuestionIndex}`).fadeIn();
             }
         });
     }
